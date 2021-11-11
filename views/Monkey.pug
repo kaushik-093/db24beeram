@@ -6,25 +6,8 @@ block content
   p 
   div(class="container-fluid")
         div(class="row")
-            -
-                let Monkey = [
-                    {
-                        "name": "Satish",
-                        "color": "black" ,
-                        "weight": 30
-                    },
-                    {
-                        "name": "harsha",
-                        "color": "brown" ,
-                        "weight": 25
-                    },
-                    {
-                        "name": "pranay",
-                        "color": "white" ,
-                        "weight": 40
-                    },                   
-                ]
-            each v,index in Monkey 
+            - let items  = results
+            each v,index in items  
                 div(class="col-sm-2" onclick=`buy(${index})`) #{v.name}
                 div(class="col-sm-2" onclick=`buy(${index})`) #{v.color}
                 div(class="col-sm-2" onclick=`buy(${index})`) #{v.weight}
