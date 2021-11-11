@@ -3,12 +3,26 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const connectionString =  process.env.MONGO_CON 
+mongoose = require('mongoose'); 
+mongoose.connect(connectionString,  {useNewUrlParser: true, useUnifiedTopology: true});
+//Get the default connection 
+var db = mongoose.connection; 
+ 
+//Bind connection to error event  
+db.on('error', console.error.bind(console, 'MongoDB connection error:')); 
+db.once("open", function(){ 
+ console.log("Connection to DB succeeded")}); 
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var MonkeyRouter = require('./routes/Monkey');
 var AddModsRouter = require('./routes/AddMods');
 var selectorRouter = require('./routes/selector');
+var Monkey = require("./models/Monkey");
+var resourceRouter = require('./routes/resource');
+
+
 var app = express();
 
 // view engine setup
@@ -26,6 +40,33 @@ app.use('/users', usersRouter);
 app.use('/Monkey', MonkeyRouter);
 app.use('/AddMods', AddModsRouter);
 app.use('/selector', selectorRouter);
+app.use('/resource', resourceRouter);
+// We can seed the collection if needed on server start 
+async function recreateDB(){ 
+  // Delete everything 
+  await Monkey.deleteMany(); 
+ 
+  let instance1 = new Monkey({name:"Satish", color:"black", weight:30}); 
+  instance1.save( function(err,doc) { 
+      if(err) return console.error(err); 
+      console.log("First object saved") 
+  }); 
+
+  let instance2 = new Monkey({name:"harsha", color:"brown", weight:25}); 
+  instance2.save( function(err,doc) { 
+      if(err) return console.error(err); 
+      console.log("Second object saved") 
+  }); 
+
+  let instance3 = new Monkey({name:"pranay", color:"white", weight:40}); 
+  instance3.save( function(err,doc) { 
+      if(err) return console.error(err); 
+      console.log("Third object saved") 
+  }); 
+} 
+ 
+let reseed = true; 
+if (reseed) { recreateDB();} 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
